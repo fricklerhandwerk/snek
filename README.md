@@ -18,3 +18,19 @@ Run `snek` without installing:
 - `Backspace`: restart game
 - `Escape`: quit program
 
+## Development
+
+Clone and enter the repository:
+
+    git clone https://github.com/fricklerhandwerk/snek
+    cd snek
+
+Start a development shell:
+
+    nix-shell
+
+Or set up [`nix-direnv`](https://github.com/nix-community/nix-direnv) on your system and run `direnv allow` to enter the development environment automatically when changing into the project directory.
+
+Run the game:
+
+    snek/main.py
