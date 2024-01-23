@@ -51,9 +51,11 @@ class Game():
 
         while not self.exit:
             self.reset()
+            # TODO: show welcome screen with key bindings info and speed selection
             with t.fullscreen(), t.raw(), t.hidden_cursor(), self.handle_resize():
                 echo(t.clear)
                 self.draw(self.rectangle(self.width, self.height), (0,0))
+                # TODO: set up game ticks with sched.scheduler
                 while not any((self.restart, self.exit)):
                     self.read_key()
 
@@ -79,6 +81,8 @@ class Game():
         """
         Draw a binary `matrix` of square pixels [ref:pixels] on the screen starting at `origin`.
         """
+        # TODO: add a double buffer and facilities for taking the difference,
+        # draw only the change between the two
         origin_x, origin_y = origin
 
         t = self.term
