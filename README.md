@@ -31,6 +31,6 @@ Start a development shell:
 
 Or set up [`nix-direnv`](https://github.com/nix-community/nix-direnv) on your system and run `direnv allow` to enter the development environment automatically when changing into the project directory.
 
-Run the game:
+Run the game and restart when any file in the repository changes:
 
-    snek/main.py
+    test-loop

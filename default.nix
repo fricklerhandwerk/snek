@@ -16,9 +16,16 @@ rec {
     buildInputs = [ ];
     propagatedBuildInputs = [ blessed ];
   };
+  test-loop = with pkgs; writeShellApplication {
+    name = "test-loop";
+    text = with pkgs; ''
+      ${watchexec}/bin/watchexec --restart --workdir ${toString ./.} ${toString ./snek/main.py}
+    '';
+  };
   shell = pkgs.mkShell {
     packages = [
       snek
+      test-loop
       pkgs.npins
     ];
   };
