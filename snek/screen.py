@@ -76,6 +76,21 @@ class Buffer:
             if 0 <= x < self.width and 0 <= y < self.height:
                 self.contents[y][x] = shape.color
 
+    def overlay(self, source: "Buffer", origin: Coordinate = (0,0)):
+        """
+        Overlay the buffer with contents of another, ignoring transparent pixels.
+        """
+        dx, dy = origin
+        for y, row in enumerate(source.contents):
+            new_y = y + dy
+            if 0 <= new_y < self.height:
+                for x, value in enumerate(row):
+                    if value:
+                        new_x = x + dx
+                        if 0 <= new_x < self.width:
+                            self.contents[new_y][new_x] = value
+
+
 class Screen:
     """
     Model of a terminal screen with quadratic pixels.
@@ -138,6 +153,12 @@ class Screen:
         Draw a shape onto the screen buffer.
         """
         self.current.draw(shape)
+
+    def overlay(self, source: Buffer, origin: Coordinate = (0,0)):
+        """
+        Overlay the screen buffer with contents of another, ignoring transparent pixels.
+        """
+        self.current.overlay(source, origin)
 
     def update(self):
         """
