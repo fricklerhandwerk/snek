@@ -64,7 +64,6 @@ class Game():
             # TODO: show welcome screen with key bindings info and speed selection
             while not self.exit:
                 self.reset()
-                # TODO: set up game ticks with sched.scheduler
                 while not any((self.restart, self.exit)):
                     echo(t.clear)
                     self.draw(rectangle(self.width, self.height), (0,0), t.reverse)
@@ -75,7 +74,7 @@ class Game():
     def read_key(self):
         t = self.term
 
-        # timeout leaves opportunity for resize event handler to take effect [ref:resize]
+        # TODO: make this timeout is the main clock, the longest interval between events
         val = t.inkey(timeout=1)
 
         if val.code == t.KEY_ESCAPE:
