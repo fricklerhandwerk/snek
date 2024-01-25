@@ -13,6 +13,9 @@ import blessed
 from blessed.colorspace import RGBColor
 
 
+Coordinate = Tuple[int, int]
+
+
 class ColorNames(type):
     def __getattr__(cls, color_name):
         try:
@@ -32,6 +35,15 @@ class Color(metaclass=ColorNames):
     pass
 
 
+@dataclass
+class Shape:
+    """
+    Single-colored pixel pattern.
+    """
+    color: RGBColor
+    coordinates: Set[Coordinate] = field(default_factory=set)
+
+
 class Buffer:
     """
     Buffer for colored or transparent pixels.
@@ -44,15 +56,6 @@ class Buffer:
         self.contents = [[None for x in range(width)] for y in range(height)]
         self.width = width
         self.height = height
-
-
-@dataclass
-class Shape:
-    """
-    Single-colored pixel pattern.
-    """
-    color: RGBColor
-    coordinates: Set[Tuple[int, int]] = field(default_factory=set)
 
 
 class Screen:
