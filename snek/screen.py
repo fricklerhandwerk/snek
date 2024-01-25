@@ -68,6 +68,13 @@ class Buffer:
         return [[col1 if col1 != col2 else None for col1, col2 in zip(row1, row2)]
                 for row1, row2 in zip(self.contents, other.contents)]
 
+    def draw(self, shape: Shape):
+        """
+        Draw a Shape onto the Buffer.
+        """
+        for x, y in shape.coordinates:
+            if 0 <= x < self.width and 0 <= y < self.height:
+                self.contents[y][x] = shape.color
 
 class Screen:
     """
@@ -126,6 +133,12 @@ class Screen:
         yield
         signal.signal(signal.SIGWINCH, signal.SIG_DFL)
 
+    def draw(self, shape: Shape):
+        """
+        Draw a shape onto the screen buffer.
+        """
+        self.current.draw(shape)
+
     def update(self):
         """
         Update the terminal with the contents of the screen buffer.
@@ -156,19 +169,3 @@ class Screen:
         # swap buffers
         self.previous = self.current
         self.current = self.buffer()
-
-
-    def draw(self, shape: Shape):
-        """
-        Draw a shape onto the screen buffer.
-        """
-        draw(self.current, shape)
-
-
-def draw(buffer: Buffer, shape: Shape):
-    """
-    Draw a Shape onto a Buffer.
-    """
-    for x, y in shape.coordinates:
-        if 0 <= x < buffer.width and 0 <= y < buffer.height:
-            buffer.contents[x][y] = shape.color
