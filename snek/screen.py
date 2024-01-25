@@ -57,6 +57,17 @@ class Buffer:
         self.width = width
         self.height = height
 
+    def __sub__(self, other: "Buffer") -> "Buffer":
+        """
+        Take the difference to a buffer of the same size.
+        For values that differ, the one from this object appears in the result.
+        """
+        if self.width != other.width or self.height != other.height:
+            raise ValueError("Buffers must have the same dimensions")
+
+        return [[col1 if col1 != col2 else None for col1, col2 in zip(row1, row2)]
+                for row1, row2 in zip(self.contents, other.contents)]
+
 
 class Screen:
     """
@@ -119,8 +130,6 @@ class Screen:
         """
         Update the terminal with the contents of the screen buffer.
         """
-        diff = buffer_difference(self.previous, self.current)
-
         # write a sequence of colored squares to the terminal
         write = lambda seq: blit("".join([colored(px) for px in seq]))
 
@@ -130,7 +139,7 @@ class Screen:
         # send characters to the terminal without updating
         blit = lambda s: print(s, end='', flush=False)
 
-        for y, row in enumerate(diff):
+        for y, row in enumerate(self.current - self.previous):
             sequence = []
             for x, pixel in enumerate(row):
                 if pixel is not None:
@@ -163,16 +172,3 @@ def draw(buffer: Buffer, shape: Shape):
     for x, y in shape.coordinates:
         if 0 <= x < buffer.width and 0 <= y < buffer.height:
             buffer.contents[x][y] = shape.color
-
-
-def buffer_difference(buffer1: Buffer, buffer2: Buffer) -> Buffer:
-    """
-    Take the difference of two buffers of the same size.
-    For values that differ, the one from the second argument appears in the result.
-    """
-    if buffer1.width != buffer2.width or buffer1.height != buffer2.height:
-        raise ValueError("Buffers must have the same dimensions")
-
-    return [[col2 if col1 != col2 else None for col1, col2 in zip(row1, row2)]
-            for row1, row2 in zip(buffer1.contents, buffer2.contents)]
-
