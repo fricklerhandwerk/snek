@@ -19,7 +19,7 @@ rec {
   test-loop = with pkgs; writeShellApplication {
     name = "test-loop";
     text = with pkgs; ''
-      ${watchexec}/bin/watchexec --restart --workdir ${toString ./.} ${toString ./snek/main.py}
+      ${watchexec}/bin/watchexec --restart --workdir ${toString ./.} python -m snek.main
     '';
   };
   shell = pkgs.mkShell {
