@@ -43,9 +43,11 @@ class Snake:
             self.body = self.body[:-1]
 
 class Game():
-    def __init__(self, terminal):
+    def __init__(self, terminal, apples=1):
+        # TODO: make the game configurable on the command line
         self.terminal = terminal
         self.screen = Screen(terminal)
+        self.number_apples = apples
         self.reset()
 
     def reset(self):
@@ -62,14 +64,19 @@ class Game():
         self.snake_1 = Snake(head=(3,1), length=3, direction=Direction.Right)
         self.snake_2 = Snake(head=(self.width-4,self.height-2), length=3, direction=Direction.Left)
         self.obstacles = rectangle(self.width, self.height)
-        self.place_apple()
+        self.apples = set()
+        for i in range(self.number_apples):
+            self.place_apple()
 
 
     def place_apple(self):
-        # it's all a lie: the apple is never actually eaten, just moved around...
         # TODO: this will crash once there are no free cells left.
         # win the game in that case?
-        self.apple = random.choice(list(self.free_cells))
+
+        padded = set()
+        for apple in self.apples:
+            padded.update(get_neighbors(apple))
+        self.apples.add(random.choice(list(self.free_cells - padded)))
 
     def run(self):
         t = self.terminal
@@ -88,12 +95,11 @@ class Game():
 
                 while not any((self.restart, self.exit)):
                     obstacles = Shape(Color.white, self.obstacles)
-                    apple = Shape(Color.red, set([self.apple]))
                     self.screen.overlay(background)
                     self.screen.draw(obstacles)
                     self.screen.draw(self.snake_1.shape(Color.green))
                     self.screen.draw(self.snake_2.shape(Color.pink))
-                    self.screen.draw(apple)
+                    self.screen.draw(Shape(Color.red, set(self.apples)))
                     self.screen.update()
                     self.read_key()
 
@@ -137,10 +143,11 @@ class Game():
         """
         hx, hy = snake.head
         dx, dy = direction.value
-        new_position = (hx + dx, hy + dy)
-        if new_position not in self.occupied_cells:
-            found_apple = new_position == self.apple
+        target = (hx + dx, hy + dy)
+        if target not in self.occupied_cells:
+            found_apple = target in self.apples
             if found_apple:
+                self.apples.discard(target)
                 self.place_apple()
             snake.move(direction, found_apple)
 
@@ -152,9 +159,6 @@ class Game():
     def free_cells(self) -> Set[Coordinate]:
         padded = Shape(color=Color.white)
 
-        def get_neighbors(c: Coordinate) -> Set[Coordinate]:
-            x, y = c
-            return set((nx, ny) for nx in range(x-1, x+2) for ny in range(y-1, y+2))
 
         for cell in self.occupied_cells:
             padded.coordinates.update(get_neighbors(cell))
@@ -169,6 +173,11 @@ class Game():
                     free.add((x, y))
 
         return free
+
+
+def get_neighbors(c: Coordinate) -> Set[Coordinate]:
+    x, y = c
+    return set((nx, ny) for nx in range(x-1, x+2) for ny in range(y-1, y+2))
 
 
 def rectangle(width: int, height: int) -> Set[Coordinate]:
