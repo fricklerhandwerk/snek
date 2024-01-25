@@ -34,3 +34,8 @@ Or set up [`nix-direnv`](https://github.com/nix-community/nix-direnv) on your sy
 Run the game and restart when any file in the repository changes:
 
     test-loop
+
+> **Note**
+>
+> Window resize events are not handled in the `test-loop` because `watchexec` seems to swallow them, and will lead to a crash.
+> Use `python -m snek.main` directly to test window resizing.
