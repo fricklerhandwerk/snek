@@ -70,6 +70,8 @@ class Game():
         # the first element is the head
         self.snake_1 = Snake(head=(3,1), length=3, direction=Direction.Right)
         self.snake_2 = Snake(head=(self.width-4,self.height-2), length=3, direction=Direction.Left)
+        self.snake_3 = Snake(head=(self.width-4,1), length=3, direction=Direction.Left)
+        self.snake_4 = Snake(head=(3,self.height-2), length=3, direction=Direction.Right)
         self.obstacles = rectangle(self.width, self.height)
         self.apples = set()
         for i in range(self.number_apples):
@@ -106,6 +108,8 @@ class Game():
                     self.screen.draw(obstacles)
                     self.screen.draw(self.snake_1.shape(Color.green))
                     self.screen.draw(self.snake_2.shape(Color.pink))
+                    self.screen.draw(self.snake_3.shape(Color.orange))
+                    self.screen.draw(self.snake_4.shape(Color.blue))
                     self.screen.draw(Shape(Color.red, set(self.apples)))
                     self.screen.update()
                     self.read_key()
@@ -124,7 +128,7 @@ class Game():
             self.restart = True
             return
 
-        # left player
+        # top-left player
         if val == 's':
             self.move(self.snake_1, Direction.Down)
         if val == 'w':
@@ -134,7 +138,7 @@ class Game():
         if val == 'd':
             self.move(self.snake_1, Direction.Right)
 
-        # right player
+        # bottom-right player
         if val.code == t.KEY_DOWN:
             self.move(self.snake_2, Direction.Down)
         if val.code == t.KEY_UP:
@@ -143,6 +147,26 @@ class Game():
             self.move(self.snake_2, Direction.Left)
         if val.code == t.KEY_RIGHT:
             self.move(self.snake_2, Direction.Right)
+
+        # top-right player
+        if val == '5':
+            self.move(self.snake_3, Direction.Down)
+        if val == '8':
+            self.move(self.snake_3, Direction.Up)
+        if val == '4':
+            self.move(self.snake_3, Direction.Left)
+        if val == '6':
+            self.move(self.snake_3, Direction.Right)
+
+        # bottom-lef player
+        if val == 'k':
+            self.move(self.snake_4, Direction.Down)
+        if val == 'i':
+            self.move(self.snake_4, Direction.Up)
+        if val == 'j':
+            self.move(self.snake_4, Direction.Left)
+        if val == 'l':
+            self.move(self.snake_4, Direction.Right)
 
     def move(self, snake, direction):
         """
@@ -160,7 +184,7 @@ class Game():
 
     @property
     def occupied_cells(self):
-        return set(self.snake_1.body) | set(self.snake_2.body) | self.obstacles
+        return set(self.snake_1.body) | set(self.snake_2.body) | set(self.snake_3.body) | set(self.snake_4.body) | self.obstacles
 
     @property
     def free_cells(self) -> Set[Coordinate]:
