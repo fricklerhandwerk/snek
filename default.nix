@@ -14,7 +14,11 @@ rec {
     name = "snek";
     src = ./.;
     buildInputs = [ ];
-    propagatedBuildInputs = [ blessed ];
+    propagatedBuildInputs = [
+      blessed
+      pydantic
+      pydantic-settings
+    ];
   };
   test-loop = with pkgs; writeShellApplication {
     name = "test-loop";

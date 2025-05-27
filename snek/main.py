@@ -7,11 +7,18 @@ from typing import Any, List, Optional, Set, Tuple
 
 from blessed import Terminal
 
+from pydantic import BaseModel, Field
+from pydantic_settings import CliApp
+
 from .screen import Buffer, Color, Coordinate, Screen, Shape
 
+class Config(BaseModel):
+    apples: int = Field(default=1, description="Number of apples in the game")
+    def cli_cmd(self):
+      Game(Terminal(), apples=self.apples).run()
 
 def main():
-    Game(Terminal()).run()
+    run = CliApp.run(Config)
 
 class Direction(Enum):
     Up = (0, -1)
